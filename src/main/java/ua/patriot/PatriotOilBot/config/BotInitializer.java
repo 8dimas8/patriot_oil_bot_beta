@@ -15,6 +15,8 @@ import ua.patriot.PatriotOilBot.central.PatriotOilBot;
 public class BotInitializer {
     @Autowired
     PatriotOilBot bot;
+
+    // ініціалізація бота
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);

@@ -2,22 +2,46 @@ package ua.patriot.PatriotOilBot.database;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 
 
 @Entity(name = "usersDataTable")
+@Component
 public class User {
     @Id
     private long chatId;
-
     private String firstName;
     private String lastName;
     private String userName;
     private Timestamp registeredAt;
-
     private String userFeedback;
+    private int userBonus;
+    private boolean feedbackStatus;
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 
+    // гетери та сетери для даних користувача, які зберігаються в бд
+
+    public boolean getFeedbackStatus() {
+        return feedbackStatus;
+    }
+
+    public void setFeedbackStatus(boolean feedbackStatus) {
+        this.feedbackStatus = feedbackStatus;
+    }
+
+
+    public int getUserBonus() {
+        return userBonus;
+    }
+
+    public void setUserBonus(int userBonus) {
+        this.userBonus = userBonus;
+    }
 
     public String getUserFeedback() {
         return userFeedback;

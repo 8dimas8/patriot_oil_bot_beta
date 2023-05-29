@@ -1,6 +1,5 @@
 package ua.patriot.PatriotOilBot.sender;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -14,6 +13,8 @@ public class BotSender extends DefaultAbsSender {
         super(new DefaultBotOptions());
     }
 
+
+    // повертає токен
     @Override
     public String getBotToken() {
         return botToken;

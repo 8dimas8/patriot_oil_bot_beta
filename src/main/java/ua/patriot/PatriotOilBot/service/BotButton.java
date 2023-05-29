@@ -1,24 +1,31 @@
 package ua.patriot.PatriotOilBot.service;
 
 import com.vdurmont.emoji.EmojiParser;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import ua.patriot.PatriotOilBot.database.UserRepository;
+import ua.patriot.PatriotOilBot.dispatcher.Dispatcher;
+import ua.patriot.PatriotOilBot.sender.MessageSender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 @Component
-@Slf4j
 public class BotButton {
-    private final BotService botService;
+    @Autowired
+    private MessageSender messageSender;
     final static String PRICE = EmojiParser.parseToUnicode("Виберіть потрібний вид пального" + ":fuelpump:");
+    @Autowired
+    @Lazy
+    private Dispatcher dispatcher;
 
-    public BotButton(BotService botService) {
-        this.botService = botService;
-    }
-
+    // метод з клавіатурою для отримання ціни пального
     public void sendPrice(long chatId){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -49,9 +56,10 @@ public class BotButton {
         markupInLine.setKeyboard(rowsInLine);
         message.setReplyMarkup(markupInLine);
 
-        botService.executeMessage(message);
+        messageSender.executeMessage(message);
     }
 
+    // метод з клавіатурою для вибору бензину
     public void chooseGasoline(long chatId){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -94,9 +102,11 @@ public class BotButton {
         markupInLine.setKeyboard(rowsInLine);
         message.setReplyMarkup(markupInLine);
 
-        botService.executeMessage(message);
+        messageSender.executeMessage(message);
     }
 
+
+    // метод з клавіатурою для повернення до попереднього меню
     public void sendBackButton(long chatId, String callbackData, String textMessage){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -115,6 +125,52 @@ public class BotButton {
         markupInLine.setKeyboard(rowsInLine);
         message.setReplyMarkup(markupInLine);
 
-        botService.executeMessage(message);
+        messageSender.executeMessage(message);
+    }
+
+
+    // метод з клавіатурою і повідомленням про прийняття відгуку
+    public void sendFeedbackMessage(Update update){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(update.getMessage().getChatId()));
+        message.setText(EmojiParser.parseToUnicode("Ми дбаємо про кожного клієнта, тому для того щоб покращити роботу нашої компанії залишіть відгук" + ":point_down:"));
+
+        InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+        var leftFeedbackButton = new InlineKeyboardButton();
+        leftFeedbackButton.setText("Залишити відгук");
+        leftFeedbackButton.setCallbackData("FEEDBACK_BUTTON");
+
+        rowInLine.add(leftFeedbackButton);
+        rowsInLine.add(rowInLine);
+        markupInLine.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markupInLine);
+
+        messageSender.executeMessage(message);
+
+    }
+
+    // метод з клавіатурою для реєстрації
+    public void registrationMessage(Update update) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(update.getMessage().getChatId()));
+        message.setText(EmojiParser.parseToUnicode("Для того щоб почати роботу потрібно зареєструватись" + ":point_down:"));
+
+        InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+        var yesRegisterButton = new InlineKeyboardButton();
+        yesRegisterButton.setText("Зареєструватись");
+        yesRegisterButton.setCallbackData("REGISTER_BUTTON");
+
+        rowInLine.add(yesRegisterButton);
+        rowsInLine.add(rowInLine);
+        markupInLine.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markupInLine);
+
+        messageSender.executeMessage(message);
     }
 }
